@@ -1,6 +1,12 @@
 async function startGame() {
   const input = document.getElementById("players").value;
-  const names = input.split(",").map(n => n.trim());
+
+  if (!input) {
+    alert("Please enter at least one player.");
+    return;
+  }
+
+  const names = input.split(",").map(n => n.trim()).filter(n => n);
 
   // Load characters
   const res = await fetch("characters.json");
@@ -9,18 +15,35 @@ async function startGame() {
   // Shuffle characters
   characters = characters.sort(() => Math.random() - 0.5);
 
+  if (characters.length < names.length) {
+    alert("Not enough characters for all players!");
+    return;
+  }
+
   const list = document.getElementById("links");
   list.innerHTML = "";
 
   names.forEach((name, i) => {
     const char = characters[i];
 
-    const link = document.createElement("a");
-    link.href = `player.html?name=${encodeURIComponent(name)}&char=${encodeURIComponent(char)}`;
-    link.innerText = `${name}'s link`;
+    const url = `${window.location.origin}/player.html?name=${encodeURIComponent(name)}&char=${encodeURIComponent(char)}`;
+
+    // QR Code
+    const qr = document.createElement("img");
+    qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+
+    const label = document.createElement("p");
+    label.innerText = name;
 
     const li = document.createElement("li");
-    li.appendChild(link);
+    li.appendChild(label);
+    li.appendChild(qr);
+
     list.appendChild(li);
   });
+}
+
+function resetGame() {
+  document.getElementById("players").value = "";
+  document.getElementById("links").innerHTML = "";
 }

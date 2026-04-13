@@ -3,7 +3,6 @@
 <head>
   <title>Your Character</title>
 
-  <!-- Prevent zoom on mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <style>
@@ -15,7 +14,23 @@
       text-align: center;
       font-family: sans-serif;
       margin: 0;
-      touch-action: manipulation; /* Helps prevent zoom gestures */
+      touch-action: manipulation;
+      background: #111;
+      color: white;
+    }
+
+    #title {
+      font-size: 6vw;
+    }
+
+    #hint {
+      font-size: 4vw;
+      opacity: 0.7;
+    }
+
+    #character {
+      font-size: 12vw; /* 🔥 BIG and readable */
+      font-weight: bold;
     }
   </style>
 </head>
@@ -37,7 +52,6 @@ document.getElementById("title").innerText = `${name}, put phone on your forehea
 let characters = [];
 let currentChar = "";
 
-// Load characters
 async function loadCharacters() {
   const res = await fetch("characters.json");
   characters = await res.json();
@@ -48,7 +62,6 @@ function getRandomCharacter() {
   return characters[Math.floor(Math.random() * characters.length)];
 }
 
-// Tap = reveal
 document.body.addEventListener("click", () => {
   if (!currentChar) {
     currentChar = getRandomCharacter();
@@ -61,7 +74,6 @@ document.body.addEventListener("click", () => {
   charEl.style.display = "block";
 });
 
-// Double tap = reroll
 let lastTap = 0;
 
 document.body.addEventListener("touchend", (event) => {
@@ -69,8 +81,7 @@ document.body.addEventListener("touchend", (event) => {
   const timeSince = now - lastTap;
 
   if (timeSince < 300 && timeSince > 0) {
-    event.preventDefault(); // 🚫 stops zoom
-
+    event.preventDefault();
     currentChar = getRandomCharacter();
     document.getElementById("character").innerText = currentChar;
   }

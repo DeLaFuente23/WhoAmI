@@ -2,6 +2,10 @@
 <html>
 <head>
   <title>Your Character</title>
+
+  <!-- Prevent zoom on mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <style>
     body {
       display: flex;
@@ -11,6 +15,7 @@
       text-align: center;
       font-family: sans-serif;
       margin: 0;
+      touch-action: manipulation; /* Helps prevent zoom gestures */
     }
   </style>
 </head>
@@ -56,7 +61,7 @@ document.body.addEventListener("click", () => {
   charEl.style.display = "block";
 });
 
-// Double tap = new character
+// Double tap = reroll
 let lastTap = 0;
 
 document.body.addEventListener("touchend", (event) => {
@@ -64,7 +69,8 @@ document.body.addEventListener("touchend", (event) => {
   const timeSince = now - lastTap;
 
   if (timeSince < 300 && timeSince > 0) {
-    // Double tap detected
+    event.preventDefault(); // 🚫 stops zoom
+
     currentChar = getRandomCharacter();
     document.getElementById("character").innerText = currentChar;
   }

@@ -8,37 +8,28 @@ async function startGame() {
 
   const names = input.split(",").map(n => n.trim()).filter(n => n);
 
-  // Load characters
-  const res = await fetch("characters.json");
-  let characters = await res.json();
-
-  // Shuffle characters
-  characters = characters.sort(() => Math.random() - 0.5);
-
-  if (characters.length < names.length) {
-    alert("Not enough characters for all players!");
-    return;
-  }
-
   const list = document.getElementById("links");
   list.innerHTML = "";
 
-  names.forEach((name, i) => {
-    const char = characters[i];
+  const base = window.location.origin + window.location.pathname.replace("index.html", "");
 
-    const base = window.location.href.replace("index.html", "").split("?")[0];
-    
-    const url = `${base}player.html?name=${encodeURIComponent(name)}&char=${encodeURIComponent(char)}`;
+  names.forEach((name) => {
+
+    const url = `${base}player.html?name=${encodeURIComponent(name)}`;
 
     // QR Code
     const qr = document.createElement("img");
     qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
 
-    const label = document.createElement("p");
-    label.innerText = name;
+    // Clickable link (NEW)
+    const link = document.createElement("a");
+    link.href = url;
+    link.innerText = name;
+    link.target = "_blank";
 
     const li = document.createElement("li");
-    li.appendChild(label);
+    li.appendChild(link);
+    li.appendChild(document.createElement("br"));
     li.appendChild(qr);
 
     list.appendChild(li);

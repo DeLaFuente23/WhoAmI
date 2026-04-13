@@ -13,15 +13,18 @@ async function startGame() {
 
   const base = window.location.origin + window.location.pathname.replace("index.html", "");
 
-  names.forEach((name) => {
+  const totalPlayers = names.length;
 
-    const url = `${base}player.html?name=${encodeURIComponent(name)}`;
+  names.forEach((name, i) => {
+
+    // 🔥 UPDATED URL (includes player index + total players)
+    const url = `${base}player.html?name=${encodeURIComponent(name)}&player=${i}&total=${totalPlayers}`;
 
     // QR Code
     const qr = document.createElement("img");
     qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
 
-    // Clickable link (NEW)
+    // Clickable link (for host)
     const link = document.createElement("a");
     link.href = url;
     link.innerText = name;

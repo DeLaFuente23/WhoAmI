@@ -14,11 +14,11 @@
     }
   </style>
 </head>
-<body onclick="reveal()">
+<body>
 
 <div id="container">
   <h2 id="title"></h2>
-  <p id="hint">(Tap anywhere to reveal)</p>
+  <p id="hint">(Tap to reveal • Double tap to change)</p>
 </div>
 
 <h1 id="character" style="display:none;"></h1>
@@ -26,20 +26,52 @@
 <script>
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name");
-const char = params.get("char");
 
 document.getElementById("title").innerText = `${name}, put phone on your forehead`;
 
-function reveal() {
-  // Hide instructions completely
+let characters = [];
+let currentChar = "";
+
+// Load characters
+async function loadCharacters() {
+  const res = await fetch("characters.json");
+  characters = await res.json();
+}
+loadCharacters();
+
+function getRandomCharacter() {
+  return characters[Math.floor(Math.random() * characters.length)];
+}
+
+// Tap = reveal
+document.body.addEventListener("click", () => {
+  if (!currentChar) {
+    currentChar = getRandomCharacter();
+  }
+
   document.getElementById("container").style.display = "none";
 
-  // Show only character
   const charEl = document.getElementById("character");
-  charEl.innerText = char;
+  charEl.innerText = currentChar;
   charEl.style.display = "block";
-}
+});
+
+// Double tap = new character
+let lastTap = 0;
+
+document.body.addEventListener("touchend", (event) => {
+  const now = new Date().getTime();
+  const timeSince = now - lastTap;
+
+  if (timeSince < 300 && timeSince > 0) {
+    // Double tap detected
+    currentChar = getRandomCharacter();
+    document.getElementById("character").innerText = currentChar;
+  }
+
+  lastTap = now;
+});
 </script>
-  
+
 </body>
 </html>

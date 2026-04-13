@@ -29,7 +29,7 @@
     }
 
     #character {
-      font-size: 12vw; /* 🔥 BIG and readable */
+      font-size: 12vw;
       font-weight: bold;
     }
   </style>
@@ -46,34 +46,44 @@
 <script>
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name");
+const playerIndex = parseInt(params.get("player"));
+const totalPlayers = parseInt(params.get("total"));
 
 document.getElementById("title").innerText = `${name}, put phone on your forehead`;
 
-let characters = [];
-let currentChar = "";
+let playerPool = [];
+let currentIndex = 0;
 
-async function loadCharacters() {
+// Load and split characters
+async function setup() {
   const res = await fetch("characters.json");
-  characters = await res.json();
-}
-loadCharacters();
+  let characters = await res.json();
 
-function getRandomCharacter() {
-  return characters[Math.floor(Math.random() * characters.length)];
+  // Shuffle once
+  characters = characters.sort(() => Math.random() - 0.5);
+
+  // Split into chunks
+  const chunkSize = Math.ceil(characters.length / totalPlayers);
+  playerPool = characters.slice(
+    playerIndex * chunkSize,
+    (playerIndex + 1) * chunkSize
+  );
 }
 
+setup();
+
+// Tap = reveal
 document.body.addEventListener("click", () => {
-  if (!currentChar) {
-    currentChar = getRandomCharacter();
-  }
+  if (playerPool.length === 0) return;
 
   document.getElementById("container").style.display = "none";
 
   const charEl = document.getElementById("character");
-  charEl.innerText = currentChar;
+  charEl.innerText = playerPool[currentIndex];
   charEl.style.display = "block";
 });
 
+// Double tap = next character (no repeats)
 let lastTap = 0;
 
 document.body.addEventListener("touchend", (event) => {
@@ -82,8 +92,9 @@ document.body.addEventListener("touchend", (event) => {
 
   if (timeSince < 300 && timeSince > 0) {
     event.preventDefault();
-    currentChar = getRandomCharacter();
-    document.getElementById("character").innerText = currentChar;
+
+    currentIndex = (currentIndex + 1) % playerPool.length;
+    document.getElementById("character").innerText = playerPool[currentIndex];
   }
 
   lastTap = now;

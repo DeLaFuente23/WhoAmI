@@ -16,11 +16,12 @@
 </head>
 <body onclick="reveal()">
 
-<div>
+<div id="container">
   <h2 id="title"></h2>
-  <h1 id="character" style="display:none;"></h1>
   <p id="hint">(Tap anywhere to reveal)</p>
 </div>
+
+<h1 id="character" style="display:none;"></h1>
 
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -30,9 +31,13 @@ const char = params.get("char");
 document.getElementById("title").innerText = `${name}, put phone on your forehead`;
 
 function reveal() {
-  document.getElementById("character").innerText = char;
-  document.getElementById("character").style.display = "block";
-  document.getElementById("hint").style.display = "none";
+  // Hide instructions completely
+  document.getElementById("container").style.display = "none";
+
+  // Show only character
+  const charEl = document.getElementById("character");
+  charEl.innerText = char;
+  charEl.style.display = "block";
 }
 </script>
 

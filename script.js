@@ -26,7 +26,9 @@ async function startGame() {
   names.forEach((name, i) => {
     const char = characters[i];
 
-    const url = `player.html?name=${encodeURIComponent(name)}&char=${encodeURIComponent(char)}`;
+    const base = window.location.href.replace("index.html", "").split("?")[0];
+    
+    const url = `${base}player.html?name=${encodeURIComponent(name)}&char=${encodeURIComponent(char)}`;
 
     // QR Code
     const qr = document.createElement("img");

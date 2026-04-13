@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Character</title>
+</head>
+<body>
+
+<h2 id="title"></h2>
+<button onclick="reveal()">Tap to reveal</button>
+<h1 id="character" style="display:none;"></h1>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const name = params.get("name");
+const char = params.get("char");
+
+document.getElementById("title").innerText = `${name}, put phone on your forehead`;
+
+function reveal() {
+  document.getElementById("character").innerText = char;
+  document.getElementById("character").style.display = "block";
+}
+</script>
+
+</body>
+</html>

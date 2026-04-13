@@ -2,12 +2,24 @@
 <html>
 <head>
   <title>Your Character</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      font-family: sans-serif;
+    }
+  </style>
 </head>
-<body>
+<body onclick="reveal()">
 
-<h2 id="title"></h2>
-<button onclick="reveal()">Tap to reveal</button>
-<h1 id="character" style="display:none;"></h1>
+<div>
+  <h2 id="title"></h2>
+  <h1 id="character" style="display:none;"></h1>
+  <p id="hint">(Tap anywhere to reveal)</p>
+</div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -19,6 +31,7 @@ document.getElementById("title").innerText = `${name}, put phone on your forehea
 function reveal() {
   document.getElementById("character").innerText = char;
   document.getElementById("character").style.display = "block";
+  document.getElementById("hint").style.display = "none";
 }
 </script>
 

@@ -22,7 +22,7 @@ async function startGame() {
 
     // QR Code
     const qr = document.createElement("img");
-    qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+    qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
 
     // Clickable link (for host)
     const link = document.createElement("a");

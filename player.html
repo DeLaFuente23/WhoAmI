@@ -1,105 +1,286 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Your Character</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
   <style>
+    :root {
+      --bg: #0a1221;
+      --panel: rgba(9, 18, 34, 0.82);
+      --line: rgba(188, 208, 255, 0.14);
+      --text: #f7fbff;
+      --muted: #a6bad5;
+      --accent: #ff914d;
+      --accent-soft: #ffc995;
+      --cool: #6bc5ff;
+      --glow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      font-family: sans-serif;
       margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
       touch-action: manipulation;
-      background: #111;
-      color: white;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(107, 197, 255, 0.15), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(255, 145, 77, 0.18), transparent 24%),
+        linear-gradient(180deg, #0a1221 0%, #101b33 52%, #09111d 100%);
+      overflow: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(20px);
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    body::before {
+      width: 180px;
+      height: 180px;
+      top: 4%;
+      left: -40px;
+      background: rgba(107, 197, 255, 0.18);
+    }
+
+    body::after {
+      width: 220px;
+      height: 220px;
+      right: -50px;
+      bottom: 3%;
+      background: rgba(255, 145, 77, 0.16);
+    }
+
+    .screen {
+      width: min(100%, 560px);
+      min-height: min(84vh, 820px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      padding: 32px 24px;
+      border-radius: 32px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+        var(--panel);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--glow);
+      text-align: center;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      right: -60px;
+      top: -60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 145, 77, 0.26), transparent 70%);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(107, 197, 255, 0.12);
+      color: var(--cool);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     #title {
-      font-size: 6vw;
+      margin: 18px 0 10px;
+      font-size: clamp(1.8rem, 6vw, 2.9rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
     }
 
-    #hint {
-      font-size: 4vw;
-      opacity: 0.7;
+    .subtitle {
+      margin: 0 auto;
+      max-width: 28ch;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .instruction-panel {
+      margin-top: 26px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .instruction {
+      padding: 16px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(188, 208, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      text-align: left;
+    }
+
+    .instruction strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .instruction span {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.94rem;
     }
 
     #character {
-      font-size: 12vw;
-      font-weight: bold;
+      display: none;
+      margin: 0;
+      font-size: clamp(2.8rem, 12vw, 5.6rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      color: #fff9f0;
+      text-wrap: balance;
+      text-shadow: 0 10px 35px rgba(0, 0, 0, 0.28);
+    }
+
+    .reveal-mode .badge,
+    .reveal-mode .subtitle,
+    .reveal-mode .instruction-panel {
+      display: none;
+    }
+
+    .reveal-mode .card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: min(84vh, 820px);
+      padding: 28px;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255, 145, 77, 0.18), transparent 35%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+        var(--panel);
+    }
+
+    .reveal-mode #title {
+      display: none;
+    }
+
+    .reveal-mode #character {
+      display: block;
+    }
+
+    @media (max-width: 520px) {
+      .card {
+        padding: 26px 18px;
+        border-radius: 26px;
+      }
+
+      .instruction {
+        padding: 14px 16px;
+      }
     }
   </style>
 </head>
 <body>
+  <main class="screen" id="screen">
+    <section class="card">
+      <span class="badge">Private Player Screen</span>
+      <h1 id="title"></h1>
+      <p class="subtitle">Keep this hidden from everyone else until you are ready to play.</p>
 
-<div id="container">
-  <h2 id="title"></h2>
-  <p id="hint">(Tap to reveal • Double tap to change)</p>
-</div>
+      <div class="instruction-panel" id="container">
+        <div class="instruction">
+          <strong>Tap once</strong>
+          <span>Reveal the character assigned to your phone.</span>
+        </div>
+        <div class="instruction">
+          <strong>Double tap</strong>
+          <span>Change to the next available character in your pool.</span>
+        </div>
+      </div>
 
-<h1 id="character" style="display:none;"></h1>
+      <h2 id="character"></h2>
+    </section>
+  </main>
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const name = params.get("name");
-const playerIndex = parseInt(params.get("player"));
-const totalPlayers = parseInt(params.get("total"));
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+    const playerIndex = parseInt(params.get("player"));
+    const totalPlayers = parseInt(params.get("total"));
 
-document.getElementById("title").innerText = `${name}, please put your phone on your forehead.`;
+    document.getElementById("title").innerText = `${name}, put your phone on your forehead.`;
 
-let playerPool = [];
-let currentIndex = 0;
+    let playerPool = [];
+    let currentIndex = 0;
+    let isRevealed = false;
 
-// Load and split characters
-async function setup() {
-  const res = await fetch("characters.json");
-  let characters = await res.json();
+    async function setup() {
+      const res = await fetch("characters.json");
+      let characters = await res.json();
 
-  // Shuffle once
-  characters = characters.sort(() => Math.random() - 0.5);
+      characters = characters.sort(() => Math.random() - 0.5);
 
-  // Split into chunks
-  const chunkSize = Math.ceil(characters.length / totalPlayers);
-  playerPool = characters.slice(
-    playerIndex * chunkSize,
-    (playerIndex + 1) * chunkSize
-  );
-}
+      const chunkSize = Math.ceil(characters.length / totalPlayers);
+      playerPool = characters.slice(
+        playerIndex * chunkSize,
+        (playerIndex + 1) * chunkSize
+      );
+    }
 
-setup();
+    setup();
 
-// Tap = reveal
-document.body.addEventListener("click", () => {
-  if (playerPool.length === 0) return;
+    document.body.addEventListener("click", () => {
+      if (playerPool.length === 0) return;
 
-  document.getElementById("container").style.display = "none";
+      const screen = document.getElementById("screen");
+      const charEl = document.getElementById("character");
 
-  const charEl = document.getElementById("character");
-  charEl.innerText = playerPool[currentIndex];
-  charEl.style.display = "block";
-});
+      screen.classList.add("reveal-mode");
+      charEl.innerText = playerPool[currentIndex];
+      isRevealed = true;
+    });
 
-// Double tap = next character (no repeats)
-let lastTap = 0;
+    let lastTap = 0;
 
-document.body.addEventListener("touchend", (event) => {
-  const now = new Date().getTime();
-  const timeSince = now - lastTap;
+    document.body.addEventListener("touchend", (event) => {
+      const now = new Date().getTime();
+      const timeSince = now - lastTap;
 
-  if (timeSince < 300 && timeSince > 0) {
-    event.preventDefault();
+      if (timeSince < 300 && timeSince > 0 && playerPool.length > 0) {
+        event.preventDefault();
 
-    currentIndex = (currentIndex + 1) % playerPool.length;
-    document.getElementById("character").innerText = playerPool[currentIndex];
-  }
+        currentIndex = (currentIndex + 1) % playerPool.length;
 
-  lastTap = now;
-});
-</script>
+        if (isRevealed) {
+          document.getElementById("character").innerText = playerPool[currentIndex];
+        }
+      }
 
+      lastTap = now;
+    });
+  </script>
 </body>
 </html>

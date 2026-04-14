@@ -157,11 +157,15 @@
     #character {
       display: none;
       margin: 0;
-      font-size: clamp(2.8rem, 12vw, 5.6rem);
-      line-height: 0.95;
+      width: 100%;
+      max-width: 100%;
+      font-size: clamp(2.2rem, 10vw, 5.2rem);
+      line-height: 1;
       letter-spacing: -0.05em;
       color: #fff9f0;
-      text-wrap: balance;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
       text-shadow: 0 10px 35px rgba(0, 0, 0, 0.28);
     }
 
@@ -199,6 +203,11 @@
 
       .instruction {
         padding: 14px 16px;
+      }
+
+      #character {
+        font-size: clamp(1.95rem, 9vw, 3.6rem);
+        letter-spacing: -0.045em;
       }
     }
   </style>

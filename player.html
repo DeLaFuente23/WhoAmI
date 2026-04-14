@@ -35,7 +35,8 @@
         radial-gradient(circle at top, rgba(107, 197, 255, 0.15), transparent 30%),
         radial-gradient(circle at 80% 20%, rgba(255, 145, 77, 0.18), transparent 24%),
         linear-gradient(180deg, #0a1221 0%, #101b33 52%, #09111d 100%);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     body::before,
@@ -66,11 +67,12 @@
 
     .screen {
       width: min(100%, 560px);
-      min-height: min(84vh, 820px);
+      min-height: calc(100vh - 40px);
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      margin: auto;
     }
 
     .card {
@@ -179,7 +181,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: min(84vh, 820px);
+      min-height: calc(100vh - 40px);
       padding: 28px;
       background:
         radial-gradient(circle at 50% 30%, rgba(255, 145, 77, 0.18), transparent 35%),
@@ -196,6 +198,16 @@
     }
 
     @media (max-width: 520px) {
+      body {
+        display: block;
+        padding: 16px;
+      }
+
+      .screen {
+        width: 100%;
+        min-height: calc(100vh - 32px);
+      }
+
       .card {
         padding: 26px 18px;
         border-radius: 26px;
@@ -208,6 +220,10 @@
       #character {
         font-size: clamp(1.95rem, 9vw, 3.6rem);
         letter-spacing: -0.045em;
+      }
+
+      .reveal-mode .card {
+        min-height: calc(100vh - 32px);
       }
     }
   </style>

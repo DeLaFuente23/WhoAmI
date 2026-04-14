@@ -1,30 +1,73 @@
+const playersInput = document.getElementById("players");
+const playerList = document.getElementById("player-list");
+const linksList = document.getElementById("links");
+const scrollCue = document.getElementById("scroll-cue");
+
+let players = [];
+
 function renderEmptyState() {
-  const list = document.getElementById("links");
-  list.innerHTML = '<li class="empty-state">Your generated player cards will appear here after you start a round.</li>';
+  linksList.innerHTML = '<li class="empty-state">Your generated player cards will appear here after you start a round.</li>';
+}
+
+function renderPlayers() {
+  if (players.length === 0) {
+    playerList.innerHTML = '<li class="name-empty">Your player list will appear here.</li>';
+    return;
+  }
+
+  playerList.innerHTML = "";
+
+  players.forEach((name, index) => {
+    const item = document.createElement("li");
+    item.className = "name-item";
+
+    const tag = document.createElement("span");
+    tag.className = "name-tag";
+    tag.innerText = name;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "remove-btn";
+    removeBtn.type = "button";
+    removeBtn.innerText = "-";
+    removeBtn.setAttribute("aria-label", `Remove ${name}`);
+    removeBtn.addEventListener("click", () => removePlayer(index));
+
+    item.appendChild(tag);
+    item.appendChild(removeBtn);
+    playerList.appendChild(item);
+  });
+}
+
+function addPlayer() {
+  const name = playersInput.value.trim();
+
+  if (!name) {
+    return;
+  }
+
+  players.push(name);
+  playersInput.value = "";
+  renderPlayers();
+  playersInput.focus();
+}
+
+function removePlayer(index) {
+  players.splice(index, 1);
+  renderPlayers();
 }
 
 async function startGame() {
-  const input = document.getElementById("players").value;
-
-  if (!input) {
-    alert("Please enter at least one player.");
+  if (players.length === 0) {
+    alert("Please add at least one player.");
     return;
   }
 
-  const names = input.split(",").map((name) => name.trim()).filter((name) => name);
-
-  if (names.length === 0) {
-    alert("Please enter valid player names.");
-    return;
-  }
-
-  const list = document.getElementById("links");
-  list.innerHTML = "";
+  linksList.innerHTML = "";
 
   const base = window.location.origin + window.location.pathname.replace("index.html", "");
-  const totalPlayers = names.length;
+  const totalPlayers = players.length;
 
-  names.forEach((name, i) => {
+  players.forEach((name, i) => {
     const url = `${base}player.html?name=${encodeURIComponent(name)}&player=${i}&total=${totalPlayers}`;
 
     const qr = document.createElement("img");
@@ -57,13 +100,35 @@ async function startGame() {
     card.appendChild(note);
     card.appendChild(qrFrame);
 
-    list.appendChild(card);
+    linksList.appendChild(card);
+  });
+
+  scrollCue.classList.add("visible");
+}
+
+function scrollToResults() {
+  document.getElementById("results").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
   });
 }
 
 function resetGame() {
-  document.getElementById("players").value = "";
+  players = [];
+  playersInput.value = "";
+  scrollCue.classList.remove("visible");
+  renderPlayers();
   renderEmptyState();
 }
 
+document.getElementById("add-player-btn").addEventListener("click", addPlayer);
+
+playersInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    addPlayer();
+  }
+});
+
+renderPlayers();
 renderEmptyState();

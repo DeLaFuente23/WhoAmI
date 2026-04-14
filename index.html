@@ -174,6 +174,13 @@
       transform: translateY(-1px);
     }
 
+    .player-entry {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
     .actions {
       display: flex;
       flex-wrap: wrap;
@@ -208,6 +215,87 @@
       background: rgba(255, 255, 255, 0.08);
       color: var(--text);
       border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .icon-btn {
+      min-width: 60px;
+      height: 60px;
+      padding: 0 18px;
+      font-size: 2rem;
+      line-height: 1;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .name-list {
+      list-style: none;
+      margin: 14px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .name-item,
+    .name-empty {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .name-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+    }
+
+    .name-tag {
+      font-weight: 700;
+      color: #eaf2ff;
+      word-break: break-word;
+    }
+
+    .remove-btn {
+      min-width: 44px;
+      height: 44px;
+      padding: 0;
+      border-radius: 999px;
+      background: rgba(255, 138, 61, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(255, 138, 61, 0.2);
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .name-empty {
+      padding: 14px 16px;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .scroll-cue {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: fit-content;
+      margin: 2px auto 0;
+      padding: 10px 18px;
+      background: transparent;
+      color: var(--secondary);
+      border: 1px dashed rgba(102, 199, 255, 0.34);
+      animation: floatCue 1.3s ease-in-out infinite;
+    }
+
+    .scroll-cue strong {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .scroll-cue.visible {
+      display: inline-flex;
     }
 
     .tips {
@@ -364,6 +452,10 @@
         flex-direction: column;
       }
 
+      .player-entry {
+        grid-template-columns: minmax(0, 1fr) 56px;
+      }
+
       button {
         width: 100%;
       }
@@ -376,34 +468,61 @@
         flex-direction: column;
         align-items: start;
       }
+
+      .icon-btn,
+      .remove-btn,
+      .scroll-cue {
+        width: auto;
+      }
+    }
+
+    @keyframes floatCue {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(4px);
+      }
     }
   </style>
 </head>
 <body>
   <main class="page">
     <section class="hero">
-      <span class="eyebrow">Party Game Generator</span>
-      <h1>Who Am I <span class="accent">Game</span></h1>
+      <span class="eyebrow">Party Game</span>
+      <h1>Who Am I<span class="accent">?</span></h1>
       <p class="subtitle">
-        Enter your players, generate personal links, and hand everyone a clean QR code so the game starts fast and feels polished.
+        Enter your players, generate personal links, give everyone their own QR code and start playing.
       </p>
 
       <section class="setup">
         <div>
           <label for="players">Player names</label>
-          <p class="field-note">Separate each name with a comma. Example: Ana, Marco, Sofia, Daniel</p>
-          <input id="players" placeholder="Enter names separated by commas">
+          <p class="field-note">Add one player at a time, then remove anyone you want before generating the links.</p>
+          <div class="player-entry">
+            <input id="players" placeholder="Enter a player name">
+            <button class="icon-btn" id="add-player-btn" type="button" aria-label="Add player">+</button>
+          </div>
+          <ul id="player-list" class="name-list">
+            <li class="name-empty">Your player list will appear here.</li>
+          </ul>
         </div>
 
         <div class="actions">
-          <button class="primary-btn" onclick="startGame()">Generate Player Links</button>
+          <button class="primary-btn" id="generate-btn" onclick="startGame()">Generate Player Links</button>
           <button class="secondary-btn" onclick="resetGame()">Clear</button>
         </div>
+
+        <button class="scroll-cue" id="scroll-cue" type="button" onclick="scrollToResults()">
+          <span>See player codes</span>
+          <strong>&darr;</strong>
+        </button>
 
         <div class="tips">
           <article class="tip">
             <strong>1. Create the round</strong>
-            <p>Type the names of everyone playing and generate their personal pages.</p>
+            <p>Add each player to the list and generate their personal pages.</p>
           </article>
           <article class="tip">
             <strong>2. Share the QR codes</strong>
@@ -417,7 +536,7 @@
       </section>
     </section>
 
-    <section class="results">
+    <section class="results" id="results">
       <div class="results-header">
         <div>
           <h2>Player Links</h2>

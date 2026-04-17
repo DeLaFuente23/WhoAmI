@@ -1,12 +1,16 @@
+const CACHE_NAME = "whoami-v1";
+const urlsToCache = [
+  "/WhoAmI/",
+  "/WhoAmI/index.html",
+  "/WhoAmI/player.html",
+  "/WhoAmI/script.js",
+  "/WhoAmI/characters.json"
+];
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open("whoami-cache").then((cache) => {
-      return cache.addAll([
-        "/WhoAmI/",
-        "/WhoAmI/index.html",
-        "/WhoAmI/style.css",
-        "/WhoAmI/script.js"
-      ]);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(urlsToCache);
     })
   );
 });

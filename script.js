@@ -130,5 +130,12 @@ playersInput.addEventListener("keydown", (event) => {
   }
 });
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/WhoAmI/service-worker.js")
+    .then(() => console.log("SW registered"))
+    .catch((err) => console.error("SW failed:", err));
+}
+
 renderPlayers();
 renderEmptyState();

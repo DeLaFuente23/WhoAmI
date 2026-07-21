@@ -261,6 +261,24 @@
     let playerPool = [];
     let currentIndex = 0;
     let isRevealed = false;
+    let wakeLock = null;
+
+    async function keepScreenAwake() {
+      if (!("wakeLock" in navigator) || wakeLock || !isRevealed) return;
+
+      try {
+        wakeLock = await navigator.wakeLock.request("screen");
+        wakeLock.addEventListener("release", () => {
+          wakeLock = null;
+          if (document.visibilityState === "visible" && isRevealed) {
+            keepScreenAwake();
+          }
+        });
+      } catch (error) {
+        // The page still works if a browser or device policy denies this request.
+        wakeLock = null;
+      }
+    }
 
     async function setup() {
       const res = await fetch("characters.json");
@@ -286,6 +304,7 @@
       screen.classList.add("reveal-mode");
       charEl.innerText = playerPool[currentIndex];
       isRevealed = true;
+      keepScreenAwake();
     });
 
     let lastTap = 0;
@@ -305,6 +324,12 @@
       }
 
       lastTap = now;
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        keepScreenAwake();
+      }
     });
   </script>
 </body>
